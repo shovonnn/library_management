@@ -1,0 +1,44 @@
+{
+  "name": "library-management-system",
+  "description": "A Django REST API for library management",
+  "keywords": ["django", "rest-api", "library", "postgresql"],
+  "stack": "heroku-22",
+  "buildpacks": [
+    {
+      "url": "heroku/python"
+    }
+  ],
+  "env": {
+    "SECRET_KEY": {
+      "description": "Django secret key for cryptographic signing",
+      "generator": "secret"
+    },
+    "DEBUG": {
+      "description": "Enable debug mode (set to False in production)",
+      "value": "False"
+    },
+    "ALLOWED_HOSTS": {
+      "description": "Comma-separated list of allowed hosts",
+      "value": ".herokuapp.com,localhost,127.0.0.1"
+    },
+    "JWT_ACCESS_TOKEN_LIFETIME": {
+      "description": "JWT access token lifetime in minutes",
+      "value": "60"
+    },
+    "JWT_REFRESH_TOKEN_LIFETIME": {
+      "description": "JWT refresh token lifetime in minutes",
+      "value": "1440"
+    }
+  },
+  "formation": {
+    "web": {
+      "quantity": 1,
+      "size": "eco"
+    }
+  },
+  "addons": [
+    {
+      "plan": "heroku-postgresql:mini"
+    }
+  ]
+}
