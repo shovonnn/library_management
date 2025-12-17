@@ -33,8 +33,8 @@ export default function BooksPage() {
 
   const [pagination, setPagination] = useState({
     count: 0,
-    next: null,
-    previous: null,
+    next: null as string | null,
+    previous: null as string | null,
   });
 
   useEffect(() => {
