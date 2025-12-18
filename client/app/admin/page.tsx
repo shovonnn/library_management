@@ -42,6 +42,7 @@ export default function AdminPage() {
       fetchBooks();
       fetchStats();
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isAuthenticated, user, authLoading]);
 
   const fetchBooks = async () => {

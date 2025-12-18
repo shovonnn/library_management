@@ -29,6 +29,7 @@ export default function MyLoansPage() {
     if (isAuthenticated) {
       fetchLoans();
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isAuthenticated, authLoading, filter]);
 
   const fetchLoans = async () => {

@@ -40,6 +40,7 @@ export default function BooksPage() {
   useEffect(() => {
     fetchBooks();
     fetchCategories();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [filters]);
 
   const fetchBooks = async () => {

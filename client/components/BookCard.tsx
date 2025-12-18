@@ -1,4 +1,5 @@
 import React from 'react';
+import Image from 'next/image';
 import { Book } from '@/lib/types';
 import { Card, CardBody } from './ui/Card';
 import { Button } from './ui/Button';
@@ -22,10 +23,11 @@ export const BookCard: React.FC<BookCardProps> = ({
     <Card hover className="h-full flex flex-col">
       <div className="relative h-64 bg-gradient-to-br from-primary-400 to-primary-600 flex items-center justify-center">
         {book.cover_image ? (
-          <img
+          <Image
             src={book.cover_image}
             alt={book.title}
-            className="h-full w-full object-cover"
+            fill
+            className="object-cover"
           />
         ) : (
           <BookOpen className="h-24 w-24 text-white opacity-50" />

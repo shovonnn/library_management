@@ -52,6 +52,7 @@ export default function ProfilePage() {
         address: user.address,
       });
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user, isAuthenticated, authLoading, reset]);
 
   const onSubmitProfile = async (data: ProfileForm) => {
