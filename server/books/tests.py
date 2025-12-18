@@ -71,6 +71,7 @@ class TestLoanModel:
     
     def test_loan_is_overdue(self):
         """Test overdue detection."""
+        from django.utils import timezone
         user = UserFactory()
         book = BookFactory()
         
@@ -78,7 +79,7 @@ class TestLoanModel:
         loan = Loan.objects.create(
             user=user,
             book=book,
-            due_date=datetime.now() + timedelta(days=1)
+            due_date=timezone.now() + timedelta(days=1)
         )
         assert loan.is_overdue is False
         
@@ -86,18 +87,19 @@ class TestLoanModel:
         overdue_loan = Loan.objects.create(
             user=user,
             book=book,
-            due_date=datetime.now() - timedelta(days=1)
+            due_date=timezone.now() - timedelta(days=1)
         )
         assert overdue_loan.is_overdue is True
     
     def test_returned_loan_not_overdue(self):
         """Test that returned loans are not marked as overdue."""
+        from django.utils import timezone
         user = UserFactory()
         book = BookFactory()
         loan = Loan.objects.create(
             user=user,
             book=book,
-            due_date=datetime.now() - timedelta(days=5),
+            due_date=timezone.now() - timedelta(days=5),
             status='returned'
         )
         assert loan.is_overdue is False

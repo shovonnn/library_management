@@ -16,7 +16,7 @@ class UserFactory(DjangoModelFactory):
     email = factory.LazyAttribute(lambda obj: f'{obj.username}@example.com')
     first_name = factory.Faker('first_name')
     last_name = factory.Faker('last_name')
-    phone_number = factory.Faker('phone_number')
+    phone_number = factory.Sequence(lambda n: f'+1555{n:07d}')
     address = factory.Faker('address')
     role = 'user'
     is_active = True
@@ -47,6 +47,11 @@ class BookFactory(DjangoModelFactory):
 class LoanFactory(DjangoModelFactory):
     class Meta:
         model = Loan
+    
+    @factory.lazy_attribute
+    def due_date(self):
+        from django.utils import timezone
+        return timezone.now() + timedelta(days=14)
     
     user = factory.SubFactory(UserFactory)
     book = factory.SubFactory(BookFactory)

@@ -25,8 +25,8 @@ class TestUserModel:
     def test_create_superuser(self):
         """Test creating a superuser."""
         admin = User.objects.create_superuser(
-            username='admin',
-            email='admin@example.com',
+            username='superadmin',
+            email='superadmin@example.com',
             password='admin123'
         )
         assert admin.is_superuser is True
@@ -45,13 +45,13 @@ class TestUserModel:
     def test_is_admin_property(self):
         """Test is_admin property."""
         regular_user = User.objects.create_user(
-            username='regular',
-            email='regular@example.com',
+            username='regularuser2',
+            email='regularuser2@example.com',
             password='pass123'
         )
         admin_user = User.objects.create_user(
-            username='admin',
-            email='admin@example.com',
+            username='adminuser2',
+            email='adminuser2@example.com',
             password='pass123',
             role='admin'
         )

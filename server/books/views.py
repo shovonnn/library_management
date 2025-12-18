@@ -88,7 +88,7 @@ class LoanViewSet(viewsets.ModelViewSet):
             active_loan = Loan.objects.filter(
                 user=request.user,
                 book=book,
-                status__in=['borrowed', 'overdue']
+                status__in=['active', 'borrowed', 'overdue']
             ).first()
             
             if active_loan:

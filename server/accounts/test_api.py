@@ -15,6 +15,8 @@ class TestAuthenticationAPI:
     def setup_method(self):
         """Setup test client."""
         self.client = APIClient()
+        # Clean up any existing data  
+        User.objects.all().delete()
     
     def test_user_registration(self):
         """Test user registration."""

@@ -79,6 +79,7 @@ DATABASES = {
         'PASSWORD': config('DB_PASSWORD', default=''),
         'HOST': config('DB_HOST', default=''),
         'PORT': config('DB_PORT', default=''),
+        'ATOMIC_REQUESTS': True,
         'OPTIONS': {
             'init_command': (
                 "SET sql_mode='STRICT_TRANS_TABLES';"

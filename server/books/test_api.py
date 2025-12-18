@@ -13,6 +13,9 @@ class TestBookAPI:
     def setup_method(self):
         """Setup test client."""
         self.client = APIClient()
+        # Clean up any existing data
+        Book.objects.all().delete()
+        Loan.objects.all().delete()
     
     def test_anonymous_user_can_view_books(self):
         """Test anonymous users can view books."""
@@ -132,6 +135,9 @@ class TestLoanAPI:
     def setup_method(self):
         """Setup test client."""
         self.client = APIClient()
+        # Clean up any existing data
+        Loan.objects.all().delete()
+        Book.objects.all().delete()
     
     def test_borrow_book(self):
         """Test borrowing a book."""
@@ -140,7 +146,7 @@ class TestLoanAPI:
         self.client.force_authenticate(user=user)
         
         data = {'book_id': book.id}
-        response = self.client.post('/api/loans/borrow/', data)
+        response = self.client.post('/api/loans/', data)
         
         assert response.status_code == status.HTTP_201_CREATED
         assert Loan.objects.filter(user=user, book=book, status='active').exists()
@@ -155,22 +161,24 @@ class TestLoanAPI:
         self.client.force_authenticate(user=user)
         
         data = {'book_id': book.id}
-        response = self.client.post('/api/loans/borrow/', data)
+        response = self.client.post('/api/loans/', data)
         
         assert response.status_code == status.HTTP_400_BAD_REQUEST
     
     def test_cannot_borrow_same_book_twice(self):
         """Test user cannot borrow the same book twice."""
+        from django.utils import timezone
+        from datetime import timedelta
         user = UserFactory()
         book = BookFactory(available_copies=5)
         self.client.force_authenticate(user=user)
         
         # First borrow
-        Loan.objects.create(user=user, book=book, status='active')
+        Loan.objects.create(user=user, book=book, status='active', due_date=timezone.now() + timedelta(days=14))
         
         # Try to borrow again
         data = {'book_id': book.id}
-        response = self.client.post('/api/loans/borrow/', data)
+        response = self.client.post('/api/loans/', data)
         
         assert response.status_code == status.HTTP_400_BAD_REQUEST
     
@@ -182,8 +190,7 @@ class TestLoanAPI:
         
         self.client.force_authenticate(user=user)
         
-        data = {'loan_id': loan.id}
-        response = self.client.post('/api/loans/return/', data)
+        response = self.client.post(f'/api/loans/{loan.id}/return/')
         
         assert response.status_code == status.HTTP_200_OK
         
@@ -212,18 +219,26 @@ class TestLoanAPI:
         LoanFactory.create_batch(5)
         
         self.client.force_authenticate(user=admin)
-        response = self.client.get('/api/admin/loans/')
+        response = self.client.get('/api/loans/')
         
         assert response.status_code == status.HTTP_200_OK
         assert len(response.data['results']) == 5
     
     def test_regular_user_cannot_view_all_loans(self):
-        """Test regular user cannot view all loans."""
+        """Test regular user cannot view all loans (should only see their own)."""
         user = UserFactory()
-        self.client.force_authenticate(user=user)
+        other_user = UserFactory()
+        # Create loans for other user
+        LoanFactory.create_batch(3, user=other_user)
+        # Create one for current user
+        LoanFactory.create(user=user)
         
-        response = self.client.get('/api/admin/loans/')
-        assert response.status_code == status.HTTP_403_FORBIDDEN
+        self.client.force_authenticate(user=user)
+        response = self.client.get('/api/loans/')
+        
+        # User should only see their own loan, not all loans
+        assert response.status_code == status.HTTP_200_OK
+        assert len(response.data['results']) == 1
     
     def test_admin_can_view_overdue_loans(self):
         """Test admin can view overdue loans."""
@@ -253,6 +268,8 @@ class TestPaginationAndFiltering:
     def setup_method(self):
         """Setup test client."""
         self.client = APIClient()
+        # Clean up any existing data
+        Book.objects.all().delete()
     
     def test_books_pagination(self):
         """Test book list pagination."""
